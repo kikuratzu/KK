@@ -26,14 +26,6 @@ public class OrderController {
         this.service = service;
     }
 
-    // ==========================================
-    //          REDIS SHOPPING CART ENDPOINTS
-    // ==========================================
-
-    /**
-     * Fetch active cart items from Redis.
-     * Pass 'isAnonymous=true' for guests using their browser-generated UUID.
-     */
     @GetMapping("cartItems/{id}")
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public List<ProductDTO> getCartItems(
@@ -43,10 +35,6 @@ public class OrderController {
         return service.getCartItems(id, isAnonymous);
     }
 
-    /**
-     * Add or update an item in a Redis cart.
-     * Pass 'isAnonymous=true' if the user isn't logged in yet.
-     */
     @PostMapping("addCartItem/{id}")
     public ResponseEntity<String> addCartItem(
             @PathVariable final UUID id,
@@ -57,9 +45,6 @@ public class OrderController {
         return ResponseEntity.ok("Cart item added successfully");
     }
 
-    /**
-     * Delete an item from a Redis cart in real time.
-     */
     @DeleteMapping("deleteCartItem/{id}/{productId}")
     public ResponseEntity<String> deleteCartItem(
             @PathVariable final UUID id,
@@ -70,10 +55,6 @@ public class OrderController {
         return ResponseEntity.ok("Item removed successfully");
     }
 
-    /**
-     * NEW ENDPOINT: Call this right after a user successfully logs in or registers.
-     * This migrates all items from their guest browser UUID into their real user profile.
-     */
     @PostMapping("cart/merge/{guestId}/{userId}")
     public ResponseEntity<String> mergeCart(
             @PathVariable final UUID guestId,
@@ -83,14 +64,6 @@ public class OrderController {
         return ResponseEntity.ok("Carts successfully merged");
     }
 
-    // ==========================================
-    //          DATABASE CHECKOUT ENDPOINTS
-    // ==========================================
-
-    /**
-     * Checkout for registered users.
-     * Pulls verified items out of Redis automatically using the {userId}.
-     */
     @PostMapping("createOrder/{userId}")
     public ResponseEntity<String> createOrder(
             @PathVariable final UUID userId,
@@ -100,10 +73,6 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Order processed successfully");
     }
 
-    /**
-     * Checkout for anonymous guests.
-     * Pulls items from Redis guest space and saves them into your permanent 'AnonymousOrder' table.
-     */
     @PostMapping("createAnonymousOrder/{guestId}")
     public ResponseEntity<String> createAnonymousOrder(
             @PathVariable final UUID guestId,
