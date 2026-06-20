@@ -133,6 +133,7 @@ public class UserService {
         return "hello";
     }
 
+    @Transactional
     public void initiateUsernameChangeFlow(final changeUsernameDTO dto) {
         User user = userRepository.findByUsername(dto.getUsername());
         if (user == null || !passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
@@ -143,6 +144,12 @@ public class UserService {
             throw new IllegalArgumentException("The new username is already taken.");
         }
 
+        List<VerificationCode> oldCodes = verificationCodeRepository.findByUsername(dto.getUsername());
+
+        if(!oldCodes.isEmpty()){
+            verificationCodeRepository.deleteAll(oldCodes);
+        }
+
         String pin = String.format("%06d", new SecureRandom().nextInt(1000000));
 
         VerificationCode verificationData = new VerificationCode(pin, user.getUsername());
@@ -150,6 +157,7 @@ public class UserService {
 
         emailService.sendVerificationCode(user.getEmail(), "Your Identity Verification Code", pin);
     }
+
 
     @Transactional
     public String changeUsername(final changeUsernameDTO dto, final String code) {
@@ -175,6 +183,8 @@ public class UserService {
 
         return service.generateToken(user.getUsername(), user.getId());
     }
+
+
 
 
 
