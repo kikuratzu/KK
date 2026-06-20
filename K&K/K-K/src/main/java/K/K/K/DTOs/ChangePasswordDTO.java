@@ -11,10 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
-public class changeUsernameDTO extends BaseDTO{
-
-   private String username;
-   private String newUsername;
-   private String password;
-
+public class ChangePasswordDTO {
+    private String username;
+    private String oldPassword;
+    private String newPassword;
 }

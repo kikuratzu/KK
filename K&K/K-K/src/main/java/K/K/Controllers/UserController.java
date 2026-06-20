@@ -1,6 +1,7 @@
 package K.K.Controllers;
 
 import K.K.Entities.User;
+import K.K.K.DTOs.ChangePasswordDTO;
 import K.K.K.DTOs.LoginUserDTO;
 import K.K.K.DTOs.RegisterUserDTO;
 import K.K.K.DTOs.changeUsernameDTO;
@@ -63,19 +64,32 @@ public class UserController {
     }
 
     @PostMapping("/request-username-change")
-    public ResponseEntity<Map<String, String>> requestChange(@RequestBody changeUsernameDTO dto) {
+    public ResponseEntity<Map<String, String>> requestChange(@RequestBody final changeUsernameDTO dto) {
         service.initiateUsernameChangeFlow(dto);
         return ResponseEntity.ok(Map.of("message", "Verification code sent to your email."));
     }
 
     @PatchMapping("/confirm-username-change")
-    public ResponseEntity<Map<String, String>> confirmChange(@RequestBody changeUsernameDTO dto,
+    public ResponseEntity<Map<String, String>> confirmChange(@RequestBody final changeUsernameDTO dto,
                                                              @RequestParam final String code) {
         String newToken = service.changeUsername(dto, code);
         return ResponseEntity.ok(Map.of(
                 "message", "Username updated successfully!",
                 "token", newToken
         ));
+    }
+
+    @PostMapping ("/request-password-change")
+    public ResponseEntity<Map<String, String>> requestPasswordChange(@RequestBody final ChangePasswordDTO dto){
+        service.initiatePasswordChange(dto);
+        return ResponseEntity.ok(Map.of("message", "Verification code sent to your email"));
+    }
+
+    @PatchMapping("/confirm-password-change")
+    public ResponseEntity<Map<String, String>> confirmPasswordChange(@RequestBody final ChangePasswordDTO dto,
+                                                                     @RequestParam final String code) {
+        service.changePassword(dto, code);
+        return ResponseEntity.ok(Map.of("message","Password updated successfully!"));
     }
 
 

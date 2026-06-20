@@ -5,6 +5,7 @@ import K.K.Entities.Role;
 import K.K.Entities.User;
 import K.K.Entities.VerificationCode;
 import K.K.Enums.ERole;
+import K.K.K.DTOs.ChangePasswordDTO;
 import K.K.K.DTOs.LoginUserDTO;
 import K.K.K.DTOs.RegisterUserDTO;
 import K.K.K.DTOs.changeUsernameDTO;
@@ -49,28 +50,6 @@ public class UserService {
         this.emailService = emailService;
         this.verificationCodeRepository = verificationCodeRepository;
     }
-
-    public void sendVerificationFlow(String username, String toEmail) {
-        String pin = String.format("%06d", new SecureRandom().nextInt(1000000));
-
-        VerificationCode verificationData = new VerificationCode(pin, username);
-        verificationCodeRepository.save(verificationData);
-
-        emailService.sendVerificationCode(toEmail, "Your Identity Verification Code", pin);
-    }
-
-    public boolean verifyCode(String submittedCode, String expectedUsername) {
-        VerificationCode savedToken = verificationCodeRepository.findById(submittedCode)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired verification code."));
-        if (!savedToken.getUsername().equals(expectedUsername)) {
-            throw new IllegalArgumentException("Code does not match this user identity.");
-        }
-
-
-        verificationCodeRepository.delete(savedToken);
-        return true;
-    }
-
 
     @Transactional(readOnly = true)
     public Map<UUID, String> verify(LoginUserDTO dto)
@@ -184,7 +163,46 @@ public class UserService {
         return service.generateToken(user.getUsername(), user.getId());
     }
 
+    @Transactional
+    public void initiatePasswordChange(final ChangePasswordDTO dto) {
+        User user = userRepository.findByUsername(dto.getUsername());
+        if (user == null || !passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Invalid credentials.");
+        }
 
+        List<VerificationCode> oldCodes = verificationCodeRepository.findByUsername(dto.getUsername());
+
+        if(!oldCodes.isEmpty()){
+            verificationCodeRepository.deleteAll(oldCodes);
+        }
+
+        String pin = String.format("%06d", new SecureRandom().nextInt(1000000));
+
+        VerificationCode verificationData = new VerificationCode(pin, user.getUsername());
+        verificationCodeRepository.save(verificationData);
+
+        emailService.sendVerificationCode(user.getEmail(), "Your Identity Verification Code", pin);
+    }
+
+    @Transactional
+    public void changePassword(final ChangePasswordDTO dto, final String code) {
+
+        VerificationCode savedToken = verificationCodeRepository.findById(code)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired verification code."));
+
+        if (!savedToken.getUsername().equals(dto.getUsername())) {
+            throw new IllegalArgumentException("Code does not match this user identity.");
+        }
+
+        User user = userRepository.findByUsername(dto.getUsername());
+
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+
+        userRepository.saveAndFlush(user);
+
+        verificationCodeRepository.delete(savedToken);
+
+    }
 
 
 

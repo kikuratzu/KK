@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/createUser", "/api/login", "/api/createAnonymousOrder", "/api/hello", "/api/addCartItem/**", "/api/cartItems/**", "/api/deleteCartItem/**", "/error", "/api/request-username-change", "/api/confirm-username-change").permitAll()
+                        .requestMatchers("/api/createUser", "/api/login", "/api/createAnonymousOrder", "/api/hello", "/api/addCartItem/**", "/api/cartItems/**", "/api/deleteCartItem/**", "/error", "/api/request-username-change", "/api/confirm-username-change","/api/request-password-change", "/api/confirm-password-change").permitAll()
                         .requestMatchers("/api/createOrder/{id}").hasRole("USER")
                         .anyRequest().authenticated()
                 );
