@@ -23,6 +23,9 @@ public class Product extends BaseEntity {
     @Column(name = "price")
     private BigDecimal price;
 
+    @Column(name="image_url")
+    private String imageUrl;
+
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private Set<OrderProduct> orderItems = new HashSet<>();
 }

@@ -21,7 +21,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("api/")
 @Slf4j
-@CrossOrigin(origins = "http://127.0.0.1:5500/")
+@CrossOrigin(origins = {"http://127.0.0.1:5500", "http://localhost:5500"})
+
 public class UserController {
 
     @Autowired
@@ -90,6 +91,11 @@ public class UserController {
                                                                      @RequestParam final String code) {
         service.changePassword(dto, code);
         return ResponseEntity.ok(Map.of("message","Password updated successfully!"));
+    }
+
+    @GetMapping("getEmailAndUsernameFromId/{id}")
+    public ResponseEntity<Map<String, String>> getEmailAndUsername(@PathVariable final UUID id){
+        return ResponseEntity.ok(service.getEmailAndUsernameFromId(id));
     }
 
 

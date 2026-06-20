@@ -29,4 +29,5 @@ public class ProductDTO extends BaseDTO implements Serializable {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private BigDecimal price;
 
+
 }

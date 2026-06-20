@@ -45,10 +45,12 @@ public class DataSeeder implements CommandLineRunner {
             Product product1 = new Product();
             product1.setName("teniska");
             product1.setPrice(BigDecimal.valueOf(20));
+            product1.setImageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRubRjNEKnz3j9y68xRyiFAKYjYWWym8uMg0keZ8jXUwQ&s=10");
 
             Product product2 = new Product();
             product2.setName("pantalon");
             product2.setPrice(BigDecimal.valueOf(40));
+            product2.setImageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPgUVmyNQG91Iz9w9a5f5AmYFo4_OiZdJ9uArbhWUFaQ&s=10");
 
             productRepository.saveAll(Arrays.asList(product1, product2));
             log.debug("Seeded initial roles into the database via CommandLineRunner.");

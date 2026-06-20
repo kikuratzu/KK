@@ -13,6 +13,7 @@ import K.K.Repositories.RoleRepository;
 import K.K.Repositories.UserRepository;
 import K.K.Repositories.VerificationCodeRepository;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
 import java.util.*;
@@ -201,6 +203,17 @@ public class UserService {
         userRepository.saveAndFlush(user);
 
         verificationCodeRepository.delete(savedToken);
+
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, String> getEmailAndUsernameFromId(final UUID id){
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"));
+
+        return Map.of(
+                "username", user.getUsername(),
+                "email", user.getEmail()
+        );
 
     }
 
