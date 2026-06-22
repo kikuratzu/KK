@@ -5,12 +5,10 @@ import K.K.Services.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @CrossOrigin(origins = {"http://127.0.0.1:5500", "http://localhost:5500"}, allowCredentials = "true")
 @RestController
@@ -30,6 +28,12 @@ public class ProductController {
         log.info("sent all product info");
         return ResponseEntity.ok(service.getAllProducts());
 
+    }
+
+    @GetMapping("/getProductById/{id}")
+    public ResponseEntity<SimpleProductDTO> getProductById(@PathVariable final UUID id){
+        log.info("sent product by Id");
+        return ResponseEntity.ok(service.getProductById(id));
     }
 
 }

@@ -71,14 +71,16 @@ public class OrderService {
         Object existingItemObj = redisTemplate.opsForHash().get(key, productIdStr);
 
         if (existingItemObj != null) {
-            ProductDTO existingItem = (ProductDTO) existingItemObj;
+            ProductDTO existingItem = objectMapper.convertValue(existingItemObj, ProductDTO.class);
             existingItem.setQuantity(existingItem.getQuantity() + productDTO.getQuantity());
             existingItem.setPrice(existingProduct.getPrice());
             existingItem.setSize(productDTO.getSize());
+            existingItem.setImageUrl(existingProduct.getImageUrl());
             redisTemplate.opsForHash().put(key, productIdStr, existingItem);
         } else {
             productDTO.setName(existingProduct.getName());
             productDTO.setPrice(existingProduct.getPrice());
+            productDTO.setImageUrl(existingProduct.getImageUrl());
             redisTemplate.opsForHash().put(key, productIdStr, productDTO);
         }
 

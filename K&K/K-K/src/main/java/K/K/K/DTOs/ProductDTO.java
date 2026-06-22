@@ -20,14 +20,23 @@ public class ProductDTO extends BaseDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonProperty("productId")
     private UUID productId;
+
+    @JsonProperty("name")
+    private String name;
+
+    @JsonProperty("price")
+    private BigDecimal price;
+
+    @JsonProperty("quantity")
     private int quantity;
+
+    @JsonProperty("size")
     private String size;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String name;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private BigDecimal price;
+    @JsonProperty("imageUrl")
+    private String imageUrl;
 
 
 }
